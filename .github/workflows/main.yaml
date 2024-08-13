@@ -1,33 +1,58 @@
-name: Build and Push Docker Image
+name: main
 
 on:
   push:
-    branches:
-      - main
+    branches: [main]
+  workflow_dispatch: {}
 
 jobs:
-  build-and-push:
+
+  # build-and-publish-cpp-app-image:
+  #   runs-on: ubuntu-latest
+
+  #   steps:
+  #   - uses: actions/checkout@v1
+
+  #   - name: Set up Docker Buildx
+  #     uses: docker/setup-buildx-action@v2
+
+  #   - name: Build SDK dependencies
+  #     run: docker run --platform linux/amd64 -v $PWD:/workspace quay.io/antaris-inc/satos-payload-sdk-tools:stable make api_lib agent_package
+
+  #   - name: Package cpp lib
+  #     run: docker run --platform linux/amd64 -v $PWD:/workspace quay.io/antaris-inc/satos-payload-sdk-tools:stable make cpp_package
+
+  #   - name: Login to image registry
+  #     uses: docker/login-action@v2
+  #     with:
+  #       registry: quay.io
+  #       username: ${{ secrets.QUAY_USERNAME }}
+  #       password: ${{ secrets.QUAY_PASSWORD }}
+
+  #   - name: Build image
+  #     run: docker build -f images/app-cpp/Dockerfile -t quay.io/antaris-inc/satos-payload-app-cpp:${GITHUB_SHA} .
+
+  #   - name: Push image
+  #     run: docker push quay.io/antaris-inc/satos-payload-app-cpp:${GITHUB_SHA}
+
+  build-and-publish-image:
     runs-on: ubuntu-latest
 
     steps:
-      # Checkout the repository
-      - name: Checkout code
-        uses: actions/checkout@v3
+    - uses: actions/checkout@v1
 
-      # Load environment variables from .env file
-      - name: Load .env file
-        run: |
-          echo "QUAY_PASSWORD=$(cat .env | grep QUAY_PASSWORD | cut -d '=' -f2)" >> $GITHUB_ENV
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v2
 
-      # Log in to Quay.io
-      - name: Log in to Quay.io
-        run: echo "${{ env.QUAY_PASSWORD }}" | docker login quay.io -u your_quay_username --password-stdin
+    - name: Build image
+      run: docker build -f Dockerfile -t quay.io/arbhalerao/github-workflow:${GITHUB_SHA} .
 
-      # Build the Docker image
-      - name: Build Docker image
-        run: docker build -t quay.io/your_quay_username/your_image_name:latest .
+    - name: Login to image registry
+      uses: docker/login-action@v2
+      with:
+        registry: quay.io
+        username: ${{ secrets.QUAY_USERNAME }}
+        password: ${{ secrets.QUAY_PASSWORD }}
 
-      # Push the Docker image to Quay.io
-      - name: Push Docker image
-        run: docker push quay.io/your_quay_username/your_image_name:latest
-
+    - name: Push image
+      run: docker push quay.io/antaris-inc/satos-payload-sdk-tools:${GITHUB_SHA}
