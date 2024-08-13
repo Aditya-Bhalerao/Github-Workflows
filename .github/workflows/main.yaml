@@ -56,7 +56,8 @@ jobs:
         docker buildx create --use
         docker buildx build --platform linux/amd64,linux/arm64 \
           -f Dockerfile \
-          -t quay.io/arbhalerao/github-workflow:${GITHUB_SHA} .
+          -t quay.io/arbhalerao/github-workflow:${GITHUB_SHA} \
+          --output type=docker .
 
     - name: Push image
       run: docker push quay.io/arbhalerao/github-workflow:${GITHUB_SHA}
