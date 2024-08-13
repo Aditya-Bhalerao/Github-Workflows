@@ -1,0 +1,33 @@
+name: Build and Push Docker Image
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checkout the repository
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # Load environment variables from .env file
+      - name: Load .env file
+        run: |
+          echo "QUAY_PASSWORD=$(cat .env | grep QUAY_PASSWORD | cut -d '=' -f2)" >> $GITHUB_ENV
+
+      # Log in to Quay.io
+      - name: Log in to Quay.io
+        run: echo "${{ env.QUAY_PASSWORD }}" | docker login quay.io -u your_quay_username --password-stdin
+
+      # Build the Docker image
+      - name: Build Docker image
+        run: docker build -t quay.io/your_quay_username/your_image_name:latest .
+
+      # Push the Docker image to Quay.io
+      - name: Push Docker image
+        run: docker push quay.io/your_quay_username/your_image_name:latest
+
