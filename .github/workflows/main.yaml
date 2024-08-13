@@ -55,4 +55,4 @@ jobs:
         password: ${{ secrets.QUAY_PASSWORD }}
 
     - name: Push image
-      run: docker push quay.io/antaris-inc/satos-payload-sdk-tools:${GITHUB_SHA}
+      run: docker push quay.io/arbhalerao/github-workflow:${GITHUB_SHA}
