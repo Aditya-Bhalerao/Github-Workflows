@@ -65,7 +65,7 @@ jobs:
 
     - name: Build and push arch image
       run: |
-        docker buildx create --use
+        
         docker buildx build --platform linux/amd64,linux/arm64 \
           -f arch/Dockerfile \
           -t quay.io/arbhalerao/arch:${GITHUB_SHA} \
