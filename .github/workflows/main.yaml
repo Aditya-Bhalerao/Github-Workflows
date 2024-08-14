@@ -20,7 +20,7 @@ jobs:
       run: docker run --platform linux/amd64 -v $PWD:/workspace quay.io/arbhalerao/arch
 
   run-arch-image-arm:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
 
     steps:
     - uses: actions/checkout@v1
